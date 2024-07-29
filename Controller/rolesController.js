@@ -43,10 +43,21 @@ const getRoles = async (req, res) => {
 //     }
 // };
 
+const RoleById = async (req,res)=>{
+    try{
+        const SinglRole = await rolesModal.findById({_id:req.query.role_id});
+        res.status(200).json(SinglRole);
+    }catch(error){
+        res.status(500).json({error:error.message});
+    }
+}
+
+
 
 
 module.exports = {
     addRoles,
     getRoles,
+    RoleById,
     // createIndex
 };
