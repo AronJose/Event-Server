@@ -39,7 +39,10 @@ const userSchema = new mongoose.Schema({
     role: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role',
-        required: true
+        required: true,
+        default: function() {
+            return new mongoose.Types.ObjectId('6655856bae971dacbebfd52b');
+        }
     }
 });
 
