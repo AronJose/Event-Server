@@ -58,6 +58,17 @@ const addServices = async (req, res) => {
     }
 };
 
+const getServices = async (req, res) => {
+    try {
+
+        const services = await Services.find();
+        res.json(services);
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 // ------------------------------------ Event Creation --------------------------------------------
 
 const createEvent = async (req, res) => {
@@ -165,5 +176,6 @@ module.exports = {
     addServices,
     createEvent,
     multipleImgUpload,
-    searchEvent
+    searchEvent,
+    getServices,
 }

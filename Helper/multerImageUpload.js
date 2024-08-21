@@ -22,10 +22,10 @@ const upload = multer({
 });
 
 // Middleware for single file upload
-const singleUpload = upload.single('file');
+const singleUpload = upload.single('image');
 
 // Middleware for multiple files upload
-const multipleUpload = upload.array('files', 5); // Limit to 10 files 
+const multipleUpload = upload.array('images', 5); // Limit to 10 files 
 
 module.exports = {
     singleUpload,
