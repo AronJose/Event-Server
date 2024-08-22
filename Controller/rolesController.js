@@ -43,12 +43,18 @@ const getRoles = async (req, res) => {
 //     }
 // };
 
-const RoleById = async (req,res)=>{
-    try{
-        const SinglRole = await rolesModal.findById({_id:req.query.role_id});
-        res.status(200).json(SinglRole);
-    }catch(error){
-        res.status(500).json({error:error.message});
+const RoleById = async (req, res) => {
+    try {
+        if (!req.query.role_id) {
+            return res.status(400).json({ "message": "Id is not Existed" })
+        }
+        const SinglRole = await rolesModal.findById({ _id: req.query.role_id });
+        if (SinglRole) {
+
+            res.status(200).json(SinglRole);
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 }
 

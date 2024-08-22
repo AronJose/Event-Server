@@ -3,7 +3,7 @@ require('dotenv').config()
 const express = require('express');
 const connectDB = require('./config/mongoDb.js');
 var bodyParser = require('body-parser');
-// const cors = require('cors');
+const cors = require('cors');
 
 
 const PORT = process.env.PORT || 8000;
@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 8000;
 connectDB();
 
 const app = express();
-// app.use(cors("http://localhost:3000"));
+app.use(cors("http://localhost:3000"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));

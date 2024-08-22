@@ -34,6 +34,21 @@ const categoryList = async (req, res) => {
     }
 };
 
+
+const categoryById = async (req, res) => {
+    try {
+        if (!req.query.category_id) {
+            return res.status(400).json({ "message": "ID is not Existed" });
+        }
+        const category = await Category.findById({ _id: req.query.category_id });
+        if (category) {
+            res.status(200).json({ category});
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 // ------------------------------- Services ----------------------------------------------
 
 const addServices = async (req, res) => {
@@ -57,7 +72,7 @@ const addServices = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
+// ------------------------------ Service List ----------------------------------------
 const getServices = async (req, res) => {
     try {
 
@@ -66,6 +81,21 @@ const getServices = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+}
+
+const serviceById = async (req, res) => {
+    try {
+        if (!req.query.service_id) {
+            return res.status(400).json({ "message": "ID is not Found" });
+        }
+        const service = await Services.findById({ _id: req.query.service_id });
+        if (service) {
+            res.status(200).json(service);
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+
     }
 }
 
@@ -126,6 +156,21 @@ const createEvent = async (req, res) => {
     }
 };
 
+// -------------------------------------- Event List --------------------------------------------
+
+const getEventList = async (req, res) => {
+    try {
+        const events = await Event.find();
+        if (events.length != 0) {
+
+            res.status(200).json(events)
+        }
+
+    } catch (error) {
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
 // ------------------------ Multiple Image Upload --------------------------------------------------
 
 const multipleImgUpload = async (req, res) => {
@@ -173,9 +218,13 @@ const searchEvent = async (req, res) => {
 module.exports = {
     addCategory,
     categoryList,
+    categoryById,
     addServices,
+    getServices,
+    serviceById,
     createEvent,
+    getEventList,
     multipleImgUpload,
     searchEvent,
-    getServices,
+
 }
