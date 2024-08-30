@@ -6,7 +6,7 @@ const verifyHashPassword = require("../Helper/password").verifyHashPassword
 
 // -------------------------------- Sign Up __--------------------------------------------
 const addUser = async (req, res) => {
-    // try {
+    try {
         const requiredFields = [
             "first_name",
             "last_name",
@@ -41,9 +41,9 @@ const addUser = async (req, res) => {
         } else {
             res.status(400).json({ Error: 'Error in inserting a new record' });
         }
-    // } catch (error) {
-    //     res.status(500).json({ error: error.message });
-    // }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 // -----------------------------Users List ---------------------------------------------

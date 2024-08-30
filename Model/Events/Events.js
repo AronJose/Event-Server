@@ -5,9 +5,11 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    image: {
-        type: String,
-    },
+    image: [
+        {
+            type: String,
+        }
+    ],
     place: {
         type: String,
         required: true
@@ -21,13 +23,11 @@ const eventSchema = new mongoose.Schema({
         required: true
     },
     services: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Services',
+        type: String,
         required: true
     }],
     category: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
+        type: String,
         required: true
     }]
 });

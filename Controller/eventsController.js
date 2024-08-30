@@ -42,7 +42,7 @@ const categoryById = async (req, res) => {
         }
         const category = await Category.findById({ _id: req.query.category_id });
         if (category) {
-            res.status(200).json({ category});
+            res.status(200).json({ category });
         }
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -118,28 +118,13 @@ const createEvent = async (req, res) => {
             }
         }
 
-        // Validate and convert category and services IDs
-        const categoryIds = req.body.category;
-        const serviceIds = req.body.services;
-
-        const validCategories = await Category.find({ _id: { $in: categoryIds } });
-        const validServices = await Services.find({ _id: { $in: serviceIds } });
-
-        if (validCategories.length !== categoryIds.length) {
-            return res.status(400).json({ error: "Some categories are invalid" });
-        }
-
-        if (validServices.length !== serviceIds.length) {
-            return res.status(400).json({ error: "Some services are invalid" });
-        }
-
         const eventCreation = {
             Event_name: req.body.Event_name,
             place: req.body.place,
             desc: req.body.desc,
             address: req.body.address,
-            category: Array.from(new Set(validCategories.map(cat => cat._id))),
-            services: Array.from(new Set(validServices.map(serv => serv._id))),
+            category: req.body.category,
+            services: req.body.services,
             image: req.body.image
         };
 
@@ -213,6 +198,8 @@ const searchEvent = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+
 
 
 module.exports = {
