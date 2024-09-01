@@ -4,6 +4,7 @@ const express = require('express');
 const connectDB = require('./config/mongoDb.js');
 var bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path');
 
 
 const PORT = process.env.PORT || 8000;
@@ -16,6 +17,7 @@ app.use(cors("http://localhost:3000"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 const roleRouters = require('./Routes/rolesRoutes.js')
