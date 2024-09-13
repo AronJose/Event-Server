@@ -25,7 +25,10 @@ const addRoles = async (req, res) => {
 const getRoles = async (req, res) => {
     try {
         const rollList = await rolesModal.find();
-        res.json(rollList);
+        if (rollList != 0) {
+
+            res.json(rollList);
+        }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

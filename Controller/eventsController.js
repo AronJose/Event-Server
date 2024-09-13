@@ -145,16 +145,50 @@ const createEvent = async (req, res) => {
 
 const getEventList = async (req, res) => {
     try {
-        const events = await Event.find();
-        if (events.length != 0) {
-
-            res.status(200).json(events)
+        const events = await Event.find({ status: 'active' });
+        if (events.length > 0) {
+            res.json(events);
+        } else {
+            res.status(404).json({ message: "No active events found" });
         }
-
     } catch (error) {
         res.status(500).json({ error: "Internal server error" });
     }
-}
+};
+
+// --------------------------- Event Update -----------------------------------------------------
+
+
+// -----------------------------Event Delete -----------------------------------------------------
+
+const eventDelete = async (req, res) => {
+    try {
+        const { event_id } = req.query;
+
+        if (!event_id) {
+            return res.status(400).json({ message: "Event ID not provided" });
+        }
+
+        const updatedEvent = await Event.findByIdAndUpdate(
+            event_id,
+            { status: 'trash' }, // Set the status to 'trash' for soft delete
+            { new: true } // Return the updated event
+        );
+
+        if (!updatedEvent) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+
+        res.status(200).json({
+            message: "Event moved to trash successfully",
+            event: updatedEvent
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
 
 // ------------------------ Multiple Image Upload --------------------------------------------------
 
@@ -172,32 +206,105 @@ const multipleImgUpload = async (req, res) => {
 };
 
 // ------------------------- search -------------------------------------------------------------
-
 const searchEvent = async (req, res) => {
     try {
-        const searchText = req.query.search;
+        const searchText = req.query.search || '';
+        const category = req.query.category ? req.query.category.split(',') : [];
+        const service = req.query.service ? req.query.service.split(',') : [];
+
+        const matchQuery = {
+            ...(searchText && {
+                Event_name: {
+                    $regex: searchText,
+                    $options: 'i',
+                }
+            }),
+            ...(category.length > 0 && {
+                category: {
+                    $in: category.map(cat => new RegExp(cat, 'i'))
+                }
+            }),
+            ...(service.length > 0 && {
+                services: {
+                    $in: service.map(ser => new RegExp(ser, 'i'))
+                }
+            }),
+            status: { $ne: 'trash' },
+        };
+
         const aggregationPipeline = [
             {
-                $match: {
-                    Event_name: {
-                        $regex: searchText,
-                        $options: "i"
-                    }
-                }
+                $match: matchQuery
             },
             {
-                $sort: { Event_name: 1 } // Sorting by Event_name in ascending order
+                $sort: { Event_name: 1 },
             }
         ];
 
-        // Execute aggregation query
         const results = await Event.aggregate(aggregationPipeline).exec();
-        res.json(results);
+        console.log(results, "results")
+        results.length > 0 ? res.status(200).json(results) : res.status(200).json({ message: "Data is Not Matched" });
+
     } catch (error) {
         console.error("Error searching events:", error);
         res.status(500).json({ error: error.message });
     }
 };
+
+
+
+// ----------------------------- Vedio Upload ------------------------------------------
+
+const searchOrGetEventList = async (req, res) => {
+    try {
+        const searchText = req.query.search || '';
+        const category = req.query.category ? req.query.category.split(',') : [];
+        const service = req.query.service ? req.query.service.split(',') : [];
+
+        const matchQuery = {
+            ...(searchText && {
+                Event_name: {
+                    $regex: searchText,
+                    $options: 'i',
+                }
+            }),
+            ...(category.length > 0 && {
+                category: {
+                    $in: category.map(cat => new RegExp(cat, 'i'))
+                }
+            }),
+            ...(service.length > 0 && {
+                services: {
+                    $in: service.map(ser => new RegExp(ser, 'i'))
+                }
+            }),
+            status: { $ne: 'trash' },  // Default match for all active/non-trash events
+        };
+
+        // Check if any search parameters exist
+        if (searchText || category.length > 0 || service.length > 0) {
+            const aggregationPipeline = [
+                { $match: matchQuery },
+                { $sort: { Event_name: 1 } },
+            ];
+
+            const results = await Event.aggregate(aggregationPipeline).exec();
+            return results.length > 0 
+                ? res.status(200).json(results) 
+                : res.status(200).json({ message: "Data is Not Matched" });
+        } else {
+            // If no search params are provided, return active events
+            const events = await Event.find({ status: 'active' });
+            return events.length > 0 
+                ? res.status(200).json(events) 
+                : res.status(404).json({ message: "No active events found" });
+        }
+    } catch (error) {
+        console.error("Error retrieving events:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
 
 
 
@@ -211,7 +318,9 @@ module.exports = {
     serviceById,
     createEvent,
     getEventList,
+    eventDelete,
     multipleImgUpload,
     searchEvent,
+    searchOrGetEventList
 
 }

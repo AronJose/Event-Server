@@ -11,7 +11,10 @@ router.get('/service', events.getServices);
 router.get('/service-id', events.serviceById);
 router.post('/addEvent', multipleUpload, events.createEvent);
 router.get('/getevents', events.getEventList);
+router.put('/delete', events.eventDelete);
 router.post('/imgM', multipleUpload, events.multipleImgUpload);
 router.get('/search', events.searchEvent);
+router.get('/list', events.searchOrGetEventList);
+
 
 module.exports = router

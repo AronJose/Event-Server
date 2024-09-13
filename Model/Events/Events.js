@@ -29,9 +29,15 @@ const eventSchema = new mongoose.Schema({
     category: [{
         type: String,
         required: true
-    }]
+    }],
+    status: {
+        type: String,
+        enum: ['active', 'inactive', 'trash'],
+        default: 'active',
+        required: true
+    },
 });
 
-const Event = mongoose.model('Events', eventSchema);
+const Event = mongoose.model('events', eventSchema);
 
 module.exports = Event;
