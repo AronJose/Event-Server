@@ -253,7 +253,7 @@ const searchEvent = async (req, res) => {
 
 
 
-// ----------------------------- Vedio Upload ------------------------------------------
+// ----------------------------- Search sort in event list ------------------------------------------
 
 const searchOrGetEventList = async (req, res) => {
     try {
