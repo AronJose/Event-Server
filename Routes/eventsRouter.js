@@ -15,6 +15,15 @@ router.put('/delete', events.eventDelete);
 router.post('/imgM', multipleUpload, events.multipleImgUpload);
 router.get('/search', events.searchEvent);
 router.get('/list', events.searchOrGetEventList);
+router.post('/providing', events.addProvings);
+router.get('/providing', events.getProvidings);
+router.post('/provider', events.addProviders);
+router.get('/provider', events.getProviders);
+router.get('/common', events.getCommonApi);
+
+
+
+
 
 
 module.exports = router

@@ -25,7 +25,7 @@ const upload = multer({
 const singleUpload = upload.single('image');
 
 // Middleware for multiple files upload
-const multipleUpload = upload.array('images', 9); // Limit to 10 files 
+const multipleUpload = upload.array('images', 8); // Limit to 10 files 
 
 module.exports = {
     singleUpload,

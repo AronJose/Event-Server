@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Providing = require('./providing/providing');
 
 const eventSchema = new mongoose.Schema({
     Event_name: {
@@ -30,12 +31,31 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: true
     }],
+    providing: [{
+        type: String,
+        required: true
+    }],
+    providers: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    contact: {
+        type: String,
+        required: true,
+        unique: true
+    },
     status: {
         type: String,
         enum: ['active', 'inactive', 'trash'],
         default: 'active',
         required: true
     },
+
 });
 
 const Event = mongoose.model('events', eventSchema);

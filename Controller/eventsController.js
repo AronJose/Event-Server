@@ -1,6 +1,8 @@
 const Category = require("../Model/Events/Category/category");
 const Services = require("../Model/Events/Services/service");
-const Event = require("../Model/Events/Events")
+const Event = require("../Model/Events/Events");
+const Providing = require("../Model/Events/providing/providing");
+const Providers = require("../Model/Events/Providers/Providers");
 
 // -------------------------Category ----------------------------------------
 const addCategory = async (req, res) => {
@@ -109,7 +111,12 @@ const createEvent = async (req, res) => {
             "desc",
             "address",
             "category",
-            "services"
+            "email",
+            "contact"
+            // "services",
+            // "providers",
+            //hall ,part, like ....
+            // "providing",
         ];
 
         for (const field of requiredFields) {
@@ -125,7 +132,11 @@ const createEvent = async (req, res) => {
             address: req.body.address,
             category: req.body.category,
             services: req.body.services,
-            image: req.body.image
+            image: req.body.image,
+            providing: req.body.providing,
+            providers: req.body.providers,
+            email: req.body.email,
+            contact: req.body.contact
         };
 
         const eventsData = new Event(eventCreation);
@@ -193,16 +204,16 @@ const eventDelete = async (req, res) => {
 // ------------------------ Multiple Image Upload --------------------------------------------------
 
 const multipleImgUpload = async (req, res) => {
-    try {
+    // try {
         if (req.files && req.files.length > 0) {
             const filepaths = req.files.map(file => `uploads/${file.filename}`);
             res.status(200).json({ message: 'Files uploaded successfully.', filepaths });
         } else {
             res.status(400).json({ error: "Failed to upload images." });
         }
-    } catch (error) {
-        res.status(500).json({ error: 'Error uploading files.' });
-    }
+    // } catch (error) {
+    //     res.status(500).json({ error: 'Error uploading files.' });
+    // }
 };
 
 // ------------------------- search -------------------------------------------------------------
@@ -289,18 +300,119 @@ const searchOrGetEventList = async (req, res) => {
             ];
 
             const results = await Event.aggregate(aggregationPipeline).exec();
-            return results.length > 0 
-                ? res.status(200).json(results) 
+            return results.length > 0
+                ? res.status(200).json(results)
                 : res.status(200).json({ message: "Data is Not Matched" });
         } else {
             // If no search params are provided, return active events
             const events = await Event.find({ status: 'active' });
-            return events.length > 0 
-                ? res.status(200).json(events) 
+            return events.length > 0
+                ? res.status(200).json(events)
                 : res.status(404).json({ message: "No active events found" });
         }
     } catch (error) {
         console.error("Error retrieving events:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+// ------------------------------Add and Get Providings-----------------------------------
+
+const addProvings = async (req, res) => {
+    try {
+        if (!req.body.providing || req.body.providing.trim() == "") {
+            return res.status(400).json({ "message": "providing Name is required" })
+        }
+        else {
+            const providings = new Providing({ providing: req.body.providing });
+
+            const providingsData = await providings.save();
+
+            if (providingsData) {
+                res.status(200).json(providingsData);
+            } else {
+                res.status(400).json({ Error: 'Error in insert new record' });
+            }
+        }
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+const getProvidings = async (req, res) => {
+    try {
+        const providingDatas = await Providing.find();
+        if (providingDatas.length > 0) {
+            res.json(providingDatas);
+        } else {
+            res.status(404).json({ message: "No active providingData found" });
+        }
+    } catch (error) {
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+// -------------------------------- Add and Get Providers ---------------------------------
+const addProviders = async (req, res) => {
+    try {
+        if (!req.body.providers || req.body.providers.trim() == "") {
+            return res.status(400).json({ "message": "providers Name is required" })
+        }
+        else {
+            const providers = new Providers({ providers: req.body.providers });
+
+            const providersData = await providers.save();
+
+            if (providersData) {
+                res.status(200).json(providersData);
+            } else {
+                res.status(400).json({ Error: 'Error in insert new record' });
+            }
+        }
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+const getProviders = async (req, res) => {
+    try {
+        const providersData = await Providers.find();
+        if (providersData.length > 0) {
+            res.json(providersData);
+        } else {
+            res.status(404).json({ message: "No active providersData found" });
+        }
+    } catch (error) {
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+// ---------------------------------------- Get Common API -----------------------------------
+
+const getCommonApi = async (req, res) => {
+    try {
+        const [providersData, providingDatas, services, categoryList] = await Promise.all([
+            Providers.find(),
+            Providing.find(),
+            Services.find(),
+            Category.find()
+        ]);
+
+        if (providersData.length > 0 || providingDatas.length > 0 || services.length > 0 || categoryList.length > 0) {
+            res.json({
+                providersData,
+                providingDatas,
+                services,
+                categoryList
+            });
+        } else {
+            res.status(404).json({ message: "No data found" });
+        }
+    } catch (error) {
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -321,6 +433,11 @@ module.exports = {
     eventDelete,
     multipleImgUpload,
     searchEvent,
-    searchOrGetEventList
+    searchOrGetEventList,
+    addProvings,
+    getProvidings,
+    addProviders,
+    getProviders,
+    getCommonApi
 
 }
