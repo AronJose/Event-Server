@@ -1,5 +1,7 @@
 const events = require('../Controller/eventsController');
 const multipleUpload = require('../Helper/multerImageUpload').multipleUpload;
+const singleVideoUpload = require('../Helper/multerImageUpload').singleVideoUpload;
+
 const express = require('express');
 const router = express.Router();
 
@@ -20,6 +22,7 @@ router.get('/providing', events.getProvidings);
 router.post('/provider', events.addProviders);
 router.get('/provider', events.getProviders);
 router.get('/common', events.getCommonApi);
+router.post('/video',singleVideoUpload,events.videoUpload);
 
 
 

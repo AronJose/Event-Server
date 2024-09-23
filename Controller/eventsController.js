@@ -204,16 +204,16 @@ const eventDelete = async (req, res) => {
 // ------------------------ Multiple Image Upload --------------------------------------------------
 
 const multipleImgUpload = async (req, res) => {
-    // try {
+    try {
         if (req.files && req.files.length > 0) {
             const filepaths = req.files.map(file => `uploads/${file.filename}`);
             res.status(200).json({ message: 'Files uploaded successfully.', filepaths });
         } else {
             res.status(400).json({ error: "Failed to upload images." });
         }
-    // } catch (error) {
-    //     res.status(500).json({ error: 'Error uploading files.' });
-    // }
+    } catch (error) {
+        res.status(500).json({ error: 'Error uploading files.' });
+    }
 };
 
 // ------------------------- search -------------------------------------------------------------
@@ -418,6 +418,33 @@ const getCommonApi = async (req, res) => {
 };
 
 
+const videoUpload = async (req, res) => {
+    // try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'No video file provided!' });
+        }
+
+        const allowedVideoTypes = ['video/mp4', 'video/mov', 'video/avi'];
+        if (!allowedVideoTypes.includes(req.file.mimetype)) {
+            return res.status(400).json({ success: false, message: 'Invalid video format!' });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Video uploaded successfully!',
+            file: req.file
+        });
+    // } catch (error) {
+    //     console.error("Error uploading video:", error);
+    //     res.status(500).json({
+    //         success: false,
+    //         message: 'An error occurred during video upload.',
+    //         error: error.message
+    //     });
+    // }
+};
+
+
 
 
 
@@ -438,6 +465,7 @@ module.exports = {
     getProvidings,
     addProviders,
     getProviders,
-    getCommonApi
+    getCommonApi,
+    videoUpload
 
 }
