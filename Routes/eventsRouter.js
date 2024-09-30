@@ -1,6 +1,6 @@
 const events = require('../Controller/eventsController');
 const multipleUpload = require('../Helper/multerImageUpload').multipleUpload;
-const singleVideoUpload = require('../Helper/multerImageUpload').singleVideoUpload;
+const singleVideoUpload = require('../Helper/multipleVedioUpload').singleVideoUpload;
 
 const express = require('express');
 const router = express.Router();

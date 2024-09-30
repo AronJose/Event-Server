@@ -104,7 +104,7 @@ const serviceById = async (req, res) => {
 // ------------------------------------ Event Creation --------------------------------------------
 
 const createEvent = async (req, res) => {
-    try {
+    // try {
         const requiredFields = [
             "Event_name",
             "place",
@@ -112,11 +112,11 @@ const createEvent = async (req, res) => {
             "address",
             "category",
             "email",
-            "contact"
-            // "services",
-            // "providers",
+            "contact",
+            "services",
+            "providers",
             //hall ,part, like ....
-            // "providing",
+            "providing",
         ];
 
         for (const field of requiredFields) {
@@ -147,9 +147,9 @@ const createEvent = async (req, res) => {
         } else {
             res.status(400).json({ error: 'Error in inserting new record' });
         }
-    } catch (error) {
-        res.status(500).json({ error: "Internal server error" });
-    }
+    // } catch (error) {
+    //     res.status(500).json({ error: "Internal server error" });
+    // }
 };
 
 // -------------------------------------- Event List --------------------------------------------
@@ -206,7 +206,7 @@ const eventDelete = async (req, res) => {
 const multipleImgUpload = async (req, res) => {
     try {
         if (req.files && req.files.length > 0) {
-            const filepaths = req.files.map(file => `uploads/${file.filename}`);
+            const filepaths = req.files.map(file => `${file.filename}`);
             res.status(200).json({ message: 'Files uploaded successfully.', filepaths });
         } else {
             res.status(400).json({ error: "Failed to upload images." });
@@ -419,7 +419,7 @@ const getCommonApi = async (req, res) => {
 
 
 const videoUpload = async (req, res) => {
-    // try {
+    try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'No video file provided!' });
         }
@@ -434,14 +434,14 @@ const videoUpload = async (req, res) => {
             message: 'Video uploaded successfully!',
             file: req.file
         });
-    // } catch (error) {
-    //     console.error("Error uploading video:", error);
-    //     res.status(500).json({
-    //         success: false,
-    //         message: 'An error occurred during video upload.',
-    //         error: error.message
-    //     });
-    // }
+    } catch (error) {
+        console.error("Error uploading video:", error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred during video upload.',
+            error: error.message
+        });
+    }
 };
 
 

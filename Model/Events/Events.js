@@ -35,10 +35,10 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: true
     }],
-    providers: {
+    providers: [{
         type: String,
         required: true
-    },
+    }],
     email: {
         type: String,
         required: true,
