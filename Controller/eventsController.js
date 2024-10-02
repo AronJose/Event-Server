@@ -105,48 +105,48 @@ const serviceById = async (req, res) => {
 
 const createEvent = async (req, res) => {
     // try {
-        const requiredFields = [
-            "Event_name",
-            "place",
-            "desc",
-            "address",
-            "category",
-            "email",
-            "contact",
-            "services",
-            "providers",
-            //hall ,part, like ....
-            "providing",
-        ];
+    const requiredFields = [
+        "Event_name",
+        "place",
+        "desc",
+        "address",
+        "category",
+        "email",
+        "contact",
+        "services",
+        "providers",
+        //hall ,part, like ....
+        "providing",
+    ];
 
-        for (const field of requiredFields) {
-            if (!req.body[field] || (typeof req.body[field] === 'string' && req.body[field].trim() === "")) {
-                return res.status(400).json({ error: `${field} is a required field` });
-            }
+    for (const field of requiredFields) {
+        if (!req.body[field] || (typeof req.body[field] === 'string' && req.body[field].trim() === "")) {
+            return res.status(400).json({ error: `${field} is a required field` });
         }
+    }
 
-        const eventCreation = {
-            Event_name: req.body.Event_name,
-            place: req.body.place,
-            desc: req.body.desc,
-            address: req.body.address,
-            category: req.body.category,
-            services: req.body.services,
-            image: req.body.image,
-            providing: req.body.providing,
-            providers: req.body.providers,
-            email: req.body.email,
-            contact: req.body.contact
-        };
+    const eventCreation = {
+        Event_name: req.body.Event_name,
+        place: req.body.place,
+        desc: req.body.desc,
+        address: req.body.address,
+        category: req.body.category,
+        services: req.body.services,
+        image: req.body.image,
+        providing: req.body.providing,
+        providers: req.body.providers,
+        email: req.body.email,
+        contact: req.body.contact
+    };
 
-        const eventsData = new Event(eventCreation);
-        let saved = await eventsData.save();
+    const eventsData = new Event(eventCreation);
+    let saved = await eventsData.save();
 
-        if (saved) {
-            res.status(200).json({ message: "success", saved: saved });
-        } else {
-            res.status(400).json({ error: 'Error in inserting new record' });
-        }
+    if (saved) {
+        res.status(200).json({ message: "success", saved: saved });
+    } else {
+        res.status(400).json({ error: 'Error in inserting new record' });
+    }
     // } catch (error) {
     //     res.status(500).json({ error: "Internal server error" });
     // }
@@ -206,7 +206,10 @@ const eventDelete = async (req, res) => {
 const multipleImgUpload = async (req, res) => {
     try {
         if (req.files && req.files.length > 0) {
-            const filepaths = req.files.map(file => `${file.filename}`);
+            const baseUrl = `${req.protocol}://${req.hostname}:${process.env.PORT || 8000}`;
+
+            const filepaths = req.files.map(file => `${baseUrl}/uploads/${file.filename}`);
+
             res.status(200).json({ message: 'Files uploaded successfully.', filepaths });
         } else {
             res.status(400).json({ error: "Failed to upload images." });
