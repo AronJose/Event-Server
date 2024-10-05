@@ -27,6 +27,7 @@ const addCategory = async (req, res) => {
     }
 };
 
+// -----------------------------------------get Category ------------------------------------------------
 const categoryList = async (req, res) => {
     try {
         const categoryList = await Category.find();
@@ -36,6 +37,7 @@ const categoryList = async (req, res) => {
     }
 };
 
+// ----------------------------- get Category BY id -------------------------------------------------------------
 
 const categoryById = async (req, res) => {
     try {
@@ -104,7 +106,7 @@ const serviceById = async (req, res) => {
 // ------------------------------------ Event Creation --------------------------------------------
 
 const createEvent = async (req, res) => {
-    // try {
+    try {
     const requiredFields = [
         "Event_name",
         "place",
@@ -147,9 +149,9 @@ const createEvent = async (req, res) => {
     } else {
         res.status(400).json({ error: 'Error in inserting new record' });
     }
-    // } catch (error) {
-    //     res.status(500).json({ error: "Internal server error" });
-    // }
+    } catch (error) {
+        res.status(500).json({ error: "Internal server error" });
+    }
 };
 
 // -------------------------------------- Event List --------------------------------------------
@@ -343,7 +345,7 @@ const addProvings = async (req, res) => {
     }
 };
 
-
+// ----------------------------------- Get providing -----------------------------------------------------
 const getProvidings = async (req, res) => {
     try {
         const providingDatas = await Providing.find();
@@ -380,6 +382,7 @@ const addProviders = async (req, res) => {
     }
 };
 
+// ---------------------------------------------- Get Providers ----------------------------------------------------
 
 const getProviders = async (req, res) => {
     try {
@@ -420,7 +423,7 @@ const getCommonApi = async (req, res) => {
     }
 };
 
-
+// -------------------------------------- MUltiple Vedio Upload --------------------------------------------
 const videoUpload = async (req, res) => {
     try {
         if (!req.file) {
