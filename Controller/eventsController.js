@@ -107,48 +107,48 @@ const serviceById = async (req, res) => {
 
 const createEvent = async (req, res) => {
     try {
-    const requiredFields = [
-        "Event_name",
-        "place",
-        "desc",
-        "address",
-        "category",
-        "email",
-        "contact",
-        "services",
-        "providers",
-        //hall ,part, like ....
-        "providing",
-    ];
+        const requiredFields = [
+            "Event_name",
+            "place",
+            "desc",
+            "address",
+            "category",
+            "email",
+            "contact",
+            "services",
+            "providers",
+            //hall ,part, like ....
+            "providing",
+        ];
 
-    for (const field of requiredFields) {
-        if (!req.body[field] || (typeof req.body[field] === 'string' && req.body[field].trim() === "")) {
-            return res.status(400).json({ error: `${field} is a required field` });
+        for (const field of requiredFields) {
+            if (!req.body[field] || (typeof req.body[field] === 'string' && req.body[field].trim() === "")) {
+                return res.status(400).json({ error: `${field} is a required field` });
+            }
         }
-    }
 
-    const eventCreation = {
-        Event_name: req.body.Event_name,
-        place: req.body.place,
-        desc: req.body.desc,
-        address: req.body.address,
-        category: req.body.category,
-        services: req.body.services,
-        image: req.body.image,
-        providing: req.body.providing,
-        providers: req.body.providers,
-        email: req.body.email,
-        contact: req.body.contact
-    };
+        const eventCreation = {
+            Event_name: req.body.Event_name,
+            place: req.body.place,
+            desc: req.body.desc,
+            address: req.body.address,
+            category: req.body.category,
+            services: req.body.services,
+            image: req.body.image,
+            providing: req.body.providing,
+            providers: req.body.providers,
+            email: req.body.email,
+            contact: req.body.contact
+        };
 
-    const eventsData = new Event(eventCreation);
-    let saved = await eventsData.save();
+        const eventsData = new Event(eventCreation);
+        let saved = await eventsData.save();
 
-    if (saved) {
-        res.status(200).json({ message: "success", saved: saved });
-    } else {
-        res.status(400).json({ error: 'Error in inserting new record' });
-    }
+        if (saved) {
+            res.status(200).json({ message: "success", saved: saved });
+        } else {
+            res.status(400).json({ error: 'Error in inserting new record' });
+        }
     } catch (error) {
         res.status(500).json({ error: "Internal server error" });
     }
@@ -276,13 +276,17 @@ const searchOrGetEventList = async (req, res) => {
         const searchText = req.query.search || '';
         const category = req.query.category ? req.query.category.split(',') : [];
         const service = req.query.service ? req.query.service.split(',') : [];
+        const providers = req.query.providers ? req.query.providers.split(',') : [];
 
         const matchQuery = {
             ...(searchText && {
-                Event_name: {
-                    $regex: searchText,
-                    $options: 'i',
-                }
+                $or: [
+                    { Event_name: { $regex: searchText, $options: 'i' } },
+                    { place: { $regex: searchText, $options: 'i' } },
+                    { services: { $regex: searchText, $options: 'i' } },
+                    { providers: { $regex: searchText, $options: 'i' } },
+                    { providing: { $regex: searchText, $options: 'i' } },
+                ]
             }),
             ...(category.length > 0 && {
                 category: {
@@ -294,14 +298,19 @@ const searchOrGetEventList = async (req, res) => {
                     $in: service.map(ser => new RegExp(ser, 'i'))
                 }
             }),
-            status: { $ne: 'trash' },  // Default match for all active/non-trash events
+            ...(providers.length > 0 && {
+                providers: {
+                    $in: providers.map(prov => new RegExp(prov, 'i'))
+                }
+            }),
+            status: { $ne: 'trash' }, 
         };
 
         // Check if any search parameters exist
-        if (searchText || category.length > 0 || service.length > 0) {
+        if (searchText || category.length > 0 || service.length > 0 || providers.length > 0) {
             const aggregationPipeline = [
                 { $match: matchQuery },
-                { $sort: { Event_name: 1 } },
+                { $sort: { Event_name: 1, place: 1 } } 
             ];
 
             const results = await Event.aggregate(aggregationPipeline).exec();
@@ -320,6 +329,7 @@ const searchOrGetEventList = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
 
 // ------------------------------Add and Get Providings-----------------------------------
 
