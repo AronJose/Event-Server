@@ -150,7 +150,9 @@ const createEvent = async (req, res) => {
             res.status(400).json({ error: 'Error in inserting new record' });
         }
     } catch (error) {
-        res.status(500).json({ error: "Internal server error" });
+        
+        
+        res.status(500).json({ error:error });
     }
 };
 
