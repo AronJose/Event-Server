@@ -13,7 +13,11 @@ const PORT = process.env.PORT || 8000;
 connectDB();
 
 const app = express();
-app.use(cors("http://localhost:3000"));
+app.use(cors(
+  "http://localhost:3000",
+//  " http://10.0.2.2:8000"
+
+));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
