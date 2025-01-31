@@ -1,5 +1,6 @@
 const users = require('../Model/Users');
 const session = require('../Model/sessions');
+const Event = require('../Model/Events/Events');
 var jwt = require("jsonwebtoken")
 const HashPassword = require("../Helper/password").HashPassword;
 const verifyHashPassword = require("../Helper/password").verifyHashPassword
@@ -62,50 +63,50 @@ const getUsers = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-    const requiredFields = ["email", "password"];
-    for (const field of requiredFields) {
-        if (!req.body[field]) {
-            return res.status(400).json({ message: `${field} is required`, code: 400 });
-        }
-    }
-    const userData = await users.findOne({ email: req.body.email });
-    if (userData) {
-        const isPasswordValid = await verifyHashPassword(req.body.password, userData.password_salt);
-        if (isPasswordValid.hash === userData.password) {
-            const tokenPayload = {
-                _id: userData._id,
-                // role: userData.role
-            };
-            const token = jwt.sign(tokenPayload, "secretkey", { expiresIn: 86400 });
-
-            const createdToken = {
-                token: token,
-                user_id: userData._id,
+        const requiredFields = ["email", "password"];
+        for (const field of requiredFields) {
+            if (!req.body[field]) {
+                return res.status(400).json({ message: `${field} is required`, code: 400 });
             }
-            const SessionData = new session(createdToken)
-            let saved = await SessionData.save()
-            if (saved) {
-                res.status(200).json({
-                    message: "success",
-                    userDetails: {
-                        _id: userData._id,
-                        first_name: userData.first_name,
-                        last_name: userData.last_name,
-                        email: userData.email,
-                        // role: userData.role,
-                        token: token
-                    }
-                });
+        }
+        const userData = await users.findOne({ email: req.body.email });
+        if (userData) {
+            const isPasswordValid = await verifyHashPassword(req.body.password, userData.password_salt);
+            if (isPasswordValid.hash === userData.password) {
+                const tokenPayload = {
+                    _id: userData._id,
+                    // role: userData.role
+                };
+                const token = jwt.sign(tokenPayload, "secretkey", { expiresIn: 86400 });
+
+                const createdToken = {
+                    token: token,
+                    user_id: userData._id,
+                }
+                const SessionData = new session(createdToken)
+                let saved = await SessionData.save()
+                if (saved) {
+                    res.status(200).json({
+                        message: "success",
+                        userDetails: {
+                            _id: userData._id,
+                            first_name: userData.first_name,
+                            last_name: userData.last_name,
+                            email: userData.email,
+                            // role: userData.role,
+                            token: token
+                        }
+                    });
+                } else {
+                    res.status(400).json({ Error: 'Error in Login data' });
+                }
+
             } else {
-                res.status(400).json({ Error: 'Error in Login data' });
+                return res.status(401).json({ message: "Authentication failed" });
             }
-
         } else {
-            return res.status(401).json({ message: "Authentication failed" });
+            return res.status(404).json({ message: "User does not exist" });
         }
-    } else {
-        return res.status(404).json({ message: "User does not exist" });
-    }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -143,13 +144,33 @@ const imgUpload = async (req, res) => {
     }
 };
 
+// ----------------- Profile ------------------------------------------------------------------------
+
+const profile = async (req, res) => {
+    try {
+        const profileData = await users.find().lean().populate({
+            path: '_id',
+            model: 'events',
+            foreignField: 'user_id',
+            localField: '_id',
+        });
+        res.status(200).json({
+            message: "success",
+            profileData
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 
 module.exports = {
     addUser,
     getUsers,
     login,
     logout,
-    imgUpload
+    imgUpload,
+    profile
 }
 
 

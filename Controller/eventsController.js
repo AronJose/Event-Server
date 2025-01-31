@@ -117,7 +117,6 @@ const createEvent = async (req, res) => {
             "contact",
             "services",
             "providers",
-            //hall ,part, like ....
             "providing",
         ];
 
@@ -125,6 +124,9 @@ const createEvent = async (req, res) => {
             if (!req.body[field] || (typeof req.body[field] === 'string' && req.body[field].trim() === "")) {
                 return res.status(400).json({ error: `${field} is a required field` });
             }
+        }
+        if (!req.user || !req.user._id) {
+            return res.status(401).json({ error: "User authentication failed" });
         }
 
         const eventCreation = {
@@ -138,7 +140,8 @@ const createEvent = async (req, res) => {
             providing: req.body.providing,
             providers: req.body.providers,
             email: req.body.email,
-            contact: req.body.contact
+            contact: req.body.contact,
+            user_id: req.user._id 
         };
 
         const eventsData = new Event(eventCreation);
@@ -150,8 +153,6 @@ const createEvent = async (req, res) => {
             res.status(400).json({ error: 'Error in inserting new record' });
         }
     } catch (error) {
-        
-        
         res.status(500).json({ error:error });
     }
 };

@@ -1,6 +1,7 @@
 const events = require('../Controller/eventsController');
 const multipleUpload = require('../Helper/multerImageUpload').multipleUpload;
 const singleVideoUpload = require('../Helper/multipleVedioUpload').singleVideoUpload;
+const verifyToken = require('../Helper/authToken');
 
 const express = require('express');
 const router = express.Router();
@@ -11,7 +12,7 @@ router.get('/categoty-id', events.categoryById);
 router.post('/service', events.addServices);
 router.get('/service', events.getServices);
 router.get('/service-id', events.serviceById);
-router.post('/addEvent', multipleUpload, events.createEvent);
+router.post('/addEvent',verifyToken, multipleUpload, events.createEvent);
 router.get('/getevents', events.getEventList);
 router.put('/delete', events.eventDelete);
 router.post('/imgM', multipleUpload, events.multipleImgUpload);

@@ -55,6 +55,15 @@ const eventSchema = new mongoose.Schema({
         default: 'active',
         required: true
     },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        required: true
+    },
+    created_at: {
+        type: Date,
+        default: Date.now
+    }
 
 });
 
