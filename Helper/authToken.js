@@ -14,6 +14,7 @@ async function verifyToken(req, res, next) {
         req.user = decoded;
     });
     const sessionData = await sessionValidation(token, req.user._id)
+    console.log(sessionData, "sessionData")
     if (!sessionData) {
         res.status(400).json({ error: "invalid session" });
     } else {
@@ -23,6 +24,7 @@ async function verifyToken(req, res, next) {
 
 const sessionValidation = async (token, user_id) => {
     const sessionToken = await Session.findOne({ token, user_id })
+    console.log(sessionToken, "sessionToken")
     if (sessionToken) {
         return (true);
     } else {
