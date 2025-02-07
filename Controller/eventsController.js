@@ -141,7 +141,7 @@ const createEvent = async (req, res) => {
             providers: req.body.providers,
             email: req.body.email,
             contact: req.body.contact,
-            user_id: req.user._id 
+            user_id: req.user._id
         };
 
         const eventsData = new Event(eventCreation);
@@ -153,7 +153,7 @@ const createEvent = async (req, res) => {
             res.status(400).json({ error: 'Error in inserting new record' });
         }
     } catch (error) {
-        res.status(500).json({ error:error });
+        res.status(500).json({ error: error });
     }
 };
 
@@ -306,14 +306,14 @@ const searchOrGetEventList = async (req, res) => {
                     $in: providers.map(prov => new RegExp(prov, 'i'))
                 }
             }),
-            status: { $ne: 'trash' }, 
+            status: { $ne: 'trash' },
         };
 
         // Check if any search parameters exist
         if (searchText || category.length > 0 || service.length > 0 || providers.length > 0) {
             const aggregationPipeline = [
                 { $match: matchQuery },
-                { $sort: { Event_name: 1, place: 1 } } 
+                { $sort: { Event_name: 1, place: 1 } }
             ];
 
             const results = await Event.aggregate(aggregationPipeline).exec();
@@ -461,6 +461,8 @@ const videoUpload = async (req, res) => {
             error: error.message
         });
     }
+
+
 };
 
 
@@ -485,6 +487,6 @@ module.exports = {
     addProviders,
     getProviders,
     getCommonApi,
-    videoUpload
+    videoUpload,
 
 }

@@ -14,6 +14,7 @@ async function verifyToken(req, res, next) {
     // Extract Bearer token
     if (token.startsWith('Bearer ')) {
         token = token.slice(7);
+        console.log(token, "token");
     }
 
     try {
