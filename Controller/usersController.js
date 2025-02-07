@@ -115,17 +115,18 @@ const login = async (req, res) => {
 // ------------------------- Logout -------------------------------------------------------
 
 const logout = async (req, res) => {
-    try {
+    // try {
         if (req && req.user && req.user._id && req.header('Authorization')) {
             const secssionRemove = await session.findOneAndDelete({ user_id: req.user._id, token: req.header('Authorization') });
             res.status(200).json({ secssionRemove })
+            console.log(secssionRemove,"sessionnnnnnnnn");
         }
         else {
             res.status(400).json({ error: "Error occured in logout" });
         }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    // } catch (error) {
+    //     res.status(500).json({ error: error.message });
+    // }
 };
 
 // -------------------- Profile Image upload -------------------------------------------------------
