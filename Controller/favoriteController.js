@@ -3,18 +3,28 @@ const User = require('../Model/Users');
 const Event = require('../Model/Events/Events');
 
 
+// ------------------------------- Adding  events to the Favorite List  -------------------------------------------------
 exports.addFavorite = async (req, res) => {
     try {
         const { user_id, event_id } = req.body;
 
-        // Check if favorite already exists
-        const existingFavorite = await Favorite.findOne({ user_id, event_id });
-        if (existingFavorite) {
-            return res.status(400).json({ message: "Event already favorited by this user." });
+        // Find favorite document for the user
+        let favorite = await Favorite.findOne({ user_id });
+
+        if (!favorite) {
+            // Create new favorite document if it doesn't exist
+            favorite = new Favorite({ user_id, event_id: [event_id] });
+        } else {
+            // Check if event is already favorited
+            if (favorite.event_id.includes(event_id)) {
+                return res.status(400).json({ message: "Event already favorited by this user." });
+            }
+
+            // Add event ID to the favorites array
+            favorite.event_id.push(event_id);
         }
 
-        // Create new favorite
-        const favorite = new Favorite({ user_id, event_id });
+        // Save the favorite document
         await favorite.save();
 
         res.status(201).json({ message: "Event added to favorites", favorite });
@@ -24,7 +34,8 @@ exports.addFavorite = async (req, res) => {
 };
 
 
-//   Remove an event from favorites
+
+// ------------------------   Remove an event from favorites  ------------------------------------------
 
 exports.removeFavorite = async (req, res) => {
     try {
@@ -43,7 +54,7 @@ exports.removeFavorite = async (req, res) => {
 };
 
 
-//   Get all favorite events of a user
+// ---------------------   Get all favorite events of a user -------------------------------------------
  
 exports.getUserFavorites = async (req, res) => {
     try {

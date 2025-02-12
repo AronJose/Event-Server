@@ -2,6 +2,7 @@ const events = require('../Controller/eventsController');
 const multipleUpload = require('../Helper/multerImageUpload').multipleUpload;
 const singleVideoUpload = require('../Helper/multipleVedioUpload').singleVideoUpload;
 const verifyToken = require('../Helper/authToken');
+const favorite = require('../Controller/favoriteController');
 
 const express = require('express');
 const router = express.Router();
@@ -24,6 +25,7 @@ router.post('/provider', events.addProviders);
 router.get('/provider', events.getProviders);
 router.get('/common', events.getCommonApi);
 router.post('/video',singleVideoUpload,events.videoUpload);
+router.post('/favorite',verifyToken,favorite.addFavorite);
 
 
 

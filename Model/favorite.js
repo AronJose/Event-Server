@@ -6,17 +6,11 @@ const favoriteSchema = new mongoose.Schema({
         ref: 'users',
         required: true
     },
-    event_id: {
+    event_id: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'events', 
-        required: true
-    }
-}, {
-    timestamps: true 
-});
-
-
-favoriteSchema.index({ user_id: 1, event_id: 1 }, { unique: true });
+        ref: 'events'
+    }]
+}, { timestamps: true });
 
 const Favorite = mongoose.model('Favorite', favoriteSchema);
 
