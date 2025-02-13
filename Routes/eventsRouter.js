@@ -26,6 +26,8 @@ router.get('/provider', events.getProviders);
 router.get('/common', events.getCommonApi);
 router.post('/video',singleVideoUpload,events.videoUpload);
 router.post('/favorite',verifyToken,favorite.addFavorite);
+router.get('/favorite',verifyToken,favorite.getUserFavorites);
+
 
 
 

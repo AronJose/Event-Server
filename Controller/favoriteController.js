@@ -57,13 +57,15 @@ exports.removeFavorite = async (req, res) => {
 // ---------------------   Get all favorite events of a user -------------------------------------------
  
 exports.getUserFavorites = async (req, res) => {
-    try {
-        const { user_id } = req.params;
+    console.log(1)
+    // try {
+        const { user_id } = req.query;
+        console.log(req);
 
         const favorites = await Favorite.find({ user_id }).populate('event_id');
 
         res.status(200).json(favorites);
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
+    // } catch (error) {
+    //     res.status(500).json({ message: "Server error", error: error.message });
+    // }
 };
