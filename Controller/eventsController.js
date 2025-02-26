@@ -174,6 +174,57 @@ const getEventList = async (req, res) => {
 
 // --------------------------- Event Update -----------------------------------------------------
 
+const eventUpdate = async (req, res) => {
+    try {
+        const { event_id, user_id } = req.query;
+
+        if (!event_id) {
+            return res.status(400).json({ message: "Event ID is required" });
+        }
+
+        if (!user_id) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+
+        const updateData = {
+            Event_name: req.body.Event_name,
+            place: req.body.place,
+            desc: req.body.desc,
+            address: req.body.address,
+            category: req.body.category,
+            services: req.body.services,
+            image: req.body.image,
+            providing: req.body.providing,
+            providers: req.body.providers,
+            email: req.body.email,
+            contact: req.body.contact,
+        };
+
+        // Remove undefined or null values from updateData
+        Object.keys(updateData).forEach(key => {
+            if (updateData[key] === undefined || updateData[key] === null) {
+                delete updateData[key];
+            }
+        });
+
+        const updatedEvent = await Event.findOneAndUpdate(
+            { _id: event_id, user_id: user_id },
+            { $set: updateData },
+            { new: true }
+        );
+
+        if (updatedEvent) {
+            res.status(200).json({ message: 'Event updated successfully', updatedEvent });
+        } else {
+            res.status(404).json({ error: "Event not found or user does not have permission to update this event." });
+        }
+    } catch (error) {
+        console.error("Error updating event:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+
 
 // -----------------------------Event Delete -----------------------------------------------------
 
@@ -488,5 +539,6 @@ module.exports = {
     getProviders,
     getCommonApi,
     videoUpload,
+    eventUpdate
 
 }

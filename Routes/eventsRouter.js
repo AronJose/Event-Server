@@ -27,11 +27,8 @@ router.get('/common', events.getCommonApi);
 router.post('/video',singleVideoUpload,events.videoUpload);
 router.post('/favorite',verifyToken,favorite.addFavorite);
 router.get('/favorite',verifyToken,favorite.getUserFavorites);
-
-
-
-
-
+router.patch('/favorite',verifyToken,favorite.removeFavorite);
+router.put('/update',verifyToken,events.eventUpdate)
 
 
 module.exports = router
