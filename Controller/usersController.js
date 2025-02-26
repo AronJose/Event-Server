@@ -116,11 +116,11 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
     try {
-    console.log(req.header('Authorization'))
+        console.log(req.header('Authorization'))
         if (req && req.user && req.user._id && req.header('Authorization')) {
-            const secssionRemove = await session.findOneAndDelete({ user_id: req.user._id, token: req.header('Authorization') });
+            const secssionRemove = await session.findOneAndDelete({ user_id: req.user._id, token: req.header('Authorization'), });
             res.status(200).json({ secssionRemove })
-            console.log(secssionRemove,"sessionnnnnnnnn");
+            console.log(secssionRemove, "sessionnnnnnnnn");
         }
         else {
             res.status(400).json({ error: "Error occured in logout" });
@@ -130,7 +130,7 @@ const logout = async (req, res) => {
     }
 };
 
-// -------------------- Profile Image upload -------------------------------------------------------
+// -------------------- Profile Image upload -------------------------------------------------
 
 const imgUpload = async (req, res) => {
     try {
@@ -146,7 +146,7 @@ const imgUpload = async (req, res) => {
     }
 };
 
-// ----------------- Profile ------------------------------------------------------------------------
+// ------------------------------ Profile -----------------------------------------------------
 
 const profile = async (req, res) => {
     try {
@@ -165,6 +165,40 @@ const profile = async (req, res) => {
     }
 };
 
+//------------------------------ Update Profile ------------------------------------------------
+const updateProfile = async (req, res) => {
+    try {
+        const { user_id } = req.query;
+
+        if (!user_id) {
+            return res.status(400).json({ message: "User Not Found" });
+        }
+
+        const updateData = {
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            email: req.body.email,
+            contact: req.body.contact,
+            // image: image ? image : null,
+        }
+
+        const updateProfile = await users.findOneAndUpdate(
+            { _id: user_id },
+            { $set: updateData },
+            { new: true });
+
+        if (updateProfile) {
+            res.status(200).json({
+                message: "success",
+                updateProfile
+            });
+        }
+
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
 
 module.exports = {
     addUser,
@@ -172,7 +206,8 @@ module.exports = {
     login,
     logout,
     imgUpload,
-    profile
+    profile,
+    updateProfile
 }
 
 

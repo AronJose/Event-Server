@@ -10,6 +10,7 @@ router.post('/login',users.login);
 router.post('/logout',verifyToken,users.logout);
 router.post('/profileImage',singleUpload,users.imgUpload);
 router.get('/profile',verifyToken,users.profile);
+router.put('/update',verifyToken,users.updateProfile);
 
 
 
