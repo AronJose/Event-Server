@@ -173,13 +173,13 @@ const updateProfile = async (req, res) => {
         if (!user_id) {
             return res.status(400).json({ message: "User Not Found" });
         }
-
+        const image = req.file ? `uploads/${req.file.filename}` : null;
         const updateData = {
             first_name: req.body.first_name,
             last_name: req.body.last_name,
             email: req.body.email,
             contact: req.body.contact,
-            // image: image ? image : null,
+            image: image ? image : null,
         }
 
         const updateProfile = await users.findOneAndUpdate(
@@ -199,6 +199,25 @@ const updateProfile = async (req, res) => {
     }
 };
 
+// --------------------------------- Delete Account Hard Delete -------------------------------------
+
+const deleteAccount = async (req, res) => {
+    try {
+        const { user_id } = req.query;
+
+        const deleteUser = await users.findByIdAndDelete({ _id: user_id });
+
+        if (deleteUser) {
+            res.status(200).json({
+                message: "An Account Deleted Successfully",
+                deleteUser
+            });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
 
 module.exports = {
     addUser,
@@ -207,7 +226,8 @@ module.exports = {
     logout,
     imgUpload,
     profile,
-    updateProfile
+    updateProfile,
+    deleteAccount
 }
 
 

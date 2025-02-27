@@ -11,8 +11,7 @@ router.post('/logout',verifyToken,users.logout);
 router.post('/profileImage',singleUpload,users.imgUpload);
 router.get('/profile',verifyToken,users.profile);
 router.put('/update',verifyToken,users.updateProfile);
-
-
+router.delete('/delete',verifyToken,users.deleteAccount);
 
 
 module.exports = router

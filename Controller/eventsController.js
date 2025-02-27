@@ -512,8 +512,17 @@ const videoUpload = async (req, res) => {
             error: error.message
         });
     }
+};
 
+// ---------------------------------- Event Listing Based on User -----------------------------------------
 
+const eventListByUser = async (req, res) => {
+    try {
+       const {user_id}=req.query;
+
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
 };
 
 
@@ -539,6 +548,6 @@ module.exports = {
     getProviders,
     getCommonApi,
     videoUpload,
-    eventUpdate
-
+    eventUpdate,
+    eventListByUser
 }
