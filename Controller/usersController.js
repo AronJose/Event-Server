@@ -4,6 +4,7 @@ const Event = require('../Model/Events/Events');
 var jwt = require("jsonwebtoken")
 const HashPassword = require("../Helper/password").HashPassword;
 const verifyHashPassword = require("../Helper/password").verifyHashPassword
+const sendEmail = require('../Helper/sendEmail')
 
 // -------------------------------- Sign Up __--------------------------------------------
 const addUser = async (req, res) => {
@@ -35,12 +36,16 @@ const addUser = async (req, res) => {
             password: hashedPassword.hash,
             password_salt: hashedPassword.salt
         }
+        const token = jwt.sign(createdUser, "secretkey", { expiresIn: 86400 });
         const userdata = new users(createdUser)
-        let saved = await userdata.save()
-        if (saved) {
-            res.status(200).json({ message: "success", saved: saved });
-        } else {
-            res.status(400).json({ Error: 'Error in inserting a new record' });
+        if (userdata) {
+            sendEmail(createdUser.email, token);
+            let saved = await userdata.save()
+            if (saved) {
+                res.status(200).json({ message: "success", saved: saved });
+            } else {
+                res.status(400).json({ Error: 'Error in inserting a new record' });
+            }
         }
     } catch (error) {
         res.status(500).json({ error: error.message });

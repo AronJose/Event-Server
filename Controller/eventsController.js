@@ -519,6 +519,7 @@ const videoUpload = async (req, res) => {
 const eventListByUser = async (req, res) => {
     try {
        const {user_id}=req.query;
+       
 
     } catch (error) {
         return res.status(500).json({ error: error.message });
