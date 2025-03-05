@@ -31,8 +31,7 @@ const sendEmail = async (email, text) => {
       <p>California</p>
     </div>
   </div>
-</div>`
-        ,
+</div>`,
     });
 };
 module.exports = sendEmail;

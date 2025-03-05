@@ -5,6 +5,8 @@ var jwt = require("jsonwebtoken")
 const HashPassword = require("../Helper/password").HashPassword;
 const verifyHashPassword = require("../Helper/password").verifyHashPassword
 const sendEmail = require('../Helper/sendEmail')
+const otp = require('../Helper/otp')
+
 
 // -------------------------------- Sign Up __--------------------------------------------
 const addUser = async (req, res) => {
@@ -36,10 +38,10 @@ const addUser = async (req, res) => {
             password: hashedPassword.hash,
             password_salt: hashedPassword.salt
         }
-        const token = jwt.sign(createdUser, "secretkey", { expiresIn: 86400 });
         const userdata = new users(createdUser)
+        const otpNumber = otp()
         if (userdata) {
-            sendEmail(createdUser.email, token);
+            sendEmail(createdUser.email, otpNumber);
             let saved = await userdata.save()
             if (saved) {
                 res.status(200).json({ message: "success", saved: saved });
